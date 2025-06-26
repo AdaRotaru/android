@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "4685515289",
+    "project_id": "relearn-9dace",
+    "storage_bucket": "relearn-9dace.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4685515289:android:52e345ce9793fbf47a7888",
+        "android_client_info": {
+          "package_name": "com.relearn.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-Yzy1m7-lhUkVgP0ftHttBawEs2d2l7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
