@@ -2,7 +2,7 @@ package com.relearn.app.core.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.relearn.app.feature.challenges.IChallengeRepository
+import com.relearn.app.feature.challenges.domain.repository.IChallengeRepository
 import com.relearn.app.core.data.firestore.RemoteChallengeRepository
 import dagger.Module
 import dagger.Provides

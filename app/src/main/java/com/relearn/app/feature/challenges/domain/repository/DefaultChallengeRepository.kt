@@ -1,7 +1,9 @@
-package com.relearn.app.feature.challenges
+package com.relearn.app.feature.challenges.domain.repository
 
 import com.relearn.app.core.data.firestore.RemoteChallengeRepository
 import com.relearn.app.core.data.local.LocalChallengeRepository
+import com.relearn.app.feature.challenges.domain.model.Challenge
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
 
 class DefaultChallengeRepository(
     private val remoteRepo: RemoteChallengeRepository,

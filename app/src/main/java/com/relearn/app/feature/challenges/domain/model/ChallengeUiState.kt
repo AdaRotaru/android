@@ -1,4 +1,4 @@
-package com.relearn.app.feature.challenges
+package com.relearn.app.feature.challenges.domain.model
 
 data class ChallengeUiState(
     val challenges: List<Challenge> = emptyList(),

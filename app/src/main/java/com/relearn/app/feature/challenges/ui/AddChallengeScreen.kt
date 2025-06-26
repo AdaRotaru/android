@@ -8,9 +8,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
-import com.relearn.app.feature.challenges.Challenge
-import com.relearn.app.feature.challenges.ChallengeStatus
-import com.relearn.app.feature.challenges.ChallengeViewModel
+import com.relearn.app.feature.challenges.domain.model.Challenge
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
+import com.relearn.app.feature.challenges.viewmodel.ChallengeViewModel
 import kotlinx.coroutines.launch
 import java.util.*
 import androidx.compose.material3.DropdownMenuItem

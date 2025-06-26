@@ -26,27 +26,20 @@ class AuthViewModel @Inject constructor(
         firstName: String,
         lastName: String,
         gender: String,
-        //birthDate: String,
-        preferences: List<String>
+        preferences: List<String>,
+        onResult: (Boolean, String?) -> Unit
     ) {
-        _authState.value = AuthState.Loading
-
         authRepository.register(
             email = email,
             password = password,
             firstName = firstName,
             lastName = lastName,
             gender = gender,
-            //birthDate = birthDate,
-            preferences = preferences
-        ) { success, error ->
-            _authState.value = if (success) {
-                AuthState.RegisterSuccess
-            } else {
-                AuthState.Error(error ?: "Eroare necunoscută")
-            }
-        }
+            preferences = preferences,
+            onResult = onResult
+        )
     }
+
 
     fun login(email: String, password: String) {
         _authState.value = AuthState.Loading

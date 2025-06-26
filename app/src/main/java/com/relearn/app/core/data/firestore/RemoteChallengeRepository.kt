@@ -1,9 +1,9 @@
 package com.relearn.app.core.data.firestore
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.relearn.app.feature.challenges.Challenge
-import com.relearn.app.feature.challenges.ChallengeStatus
-import com.relearn.app.feature.challenges.IChallengeRepository
+import com.relearn.app.feature.challenges.domain.model.Challenge
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
+import com.relearn.app.feature.challenges.domain.repository.IChallengeRepository
 import kotlinx.coroutines.tasks.await
 
 class RemoteChallengeRepository(

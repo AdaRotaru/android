@@ -1,11 +1,12 @@
 package com.relearn.app.feature.auth.ui
 
-import android.app.DatePickerDialog
-import android.widget.DatePicker
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -17,18 +18,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.relearn.app.feature.auth.AuthState
+import com.relearn.app.feature.auth.AuthViewModel
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen1(
+fun RegisterScreen(
     onNext: (firstName: String, lastName: String, gender: String, email: String, password: String) -> Unit,
     onLoginClick: () -> Unit
 ) {
@@ -57,7 +59,7 @@ fun RegisterScreen1(
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(48.dp)) // 👈 coborâm "Creează cont"
             Text(
                 text = "Creează cont",
                 style = MaterialTheme.typography.headlineMedium,
@@ -174,23 +176,16 @@ fun RegisterScreen1(
 
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    TextButton(onClick = { onLoginClick() }) {
-                        Text(
-                            text = "Ai deja cont? Login",
-                            color = MaterialTheme.colorScheme.primary, // sau exact culoarea butonului tău
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                    Text("Ai deja cont? ")
+                    TextButton(onClick = onLoginClick) {
+                        Text("Login")
                     }
                 }
-
 
                 Spacer(modifier = Modifier.height(48.dp))
             }
         }
     }
 }
-

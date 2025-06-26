@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.relearn.app.feature.challenges.Challenge
-import com.relearn.app.feature.challenges.ChallengeStatus
+import com.relearn.app.feature.challenges.domain.model.Challenge
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
 val CATEGORY_COLORS = mapOf(
     "Mindfulness" to Color(0xFFE1BEE7),
     "Fitness" to Color(0xFFB2DFDB),

@@ -1,4 +1,4 @@
-package com.relearn.app.feature.challenges
+package com.relearn.app.feature.challenges.domain.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

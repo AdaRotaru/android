@@ -1,8 +1,12 @@
-package com.relearn.app.feature.challenges
+package com.relearn.app.feature.challenges.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.relearn.app.feature.challenges.domain.model.Challenge
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
+import com.relearn.app.feature.challenges.domain.model.ChallengeUiState
 
+import com.relearn.app.feature.challenges.domain.repository.IChallengeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

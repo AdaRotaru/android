@@ -1,8 +1,8 @@
 package com.relearn.app.core.data.local
 
-import com.relearn.app.feature.challenges.Challenge
-import com.relearn.app.feature.challenges.ChallengeStatus
-import com.relearn.app.feature.challenges.IChallengeRepository
+import com.relearn.app.feature.challenges.domain.model.Challenge
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
+import com.relearn.app.feature.challenges.domain.repository.IChallengeRepository
 
 class LocalChallengeRepository : IChallengeRepository {
 

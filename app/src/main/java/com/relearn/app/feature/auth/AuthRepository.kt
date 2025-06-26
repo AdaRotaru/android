@@ -14,7 +14,6 @@ class AuthRepository @Inject constructor(
         firstName: String,
         lastName: String,
         gender: String,
-        //birthDate: String,
         preferences: List<String>,
         onResult: (Boolean, String?) -> Unit
     ) {
@@ -34,7 +33,6 @@ class AuthRepository @Inject constructor(
                         "lastName" to lastName,
                         "email" to email,
                         "gender" to gender,
-                       // "birthDate" to birthDate,
                         "preferences" to preferences,
                         "createdAt" to com.google.firebase.Timestamp.now()
                     )

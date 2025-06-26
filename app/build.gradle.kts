@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId = "com.relearn.app"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
@@ -32,7 +32,6 @@ android {
 
     buildFeatures {
         compose = true
-        viewBinding = true
     }
 
     composeOptions {
@@ -43,7 +42,6 @@ android {
         jvmToolchain(17)
     }
 }
-
 configurations.all {
     resolutionStrategy {
         force("androidx.activity:activity-compose:1.9.0")
@@ -51,68 +49,33 @@ configurations.all {
         force("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     }
 }
-
 dependencies {
-    // Compose & UI
+    implementation(libs.androidx.core.ktx.v1131)
+    implementation(libs.androidx.lifecycle.runtime.ktx.v270)
+    implementation(libs.androidx.activity.compose.v190)
+
     implementation(libs.ui)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.foundation.android)
+
     debugImplementation(libs.ui.tooling)
 
-    // Lifecycle + ViewModel
-    implementation(libs.androidx.lifecycle.runtime.ktx.v270)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    // Activity
-    implementation(libs.androidx.activity.compose.v190)
-
-    // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.firebase.messaging.ktx)
-
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-    // Room
-    implementation(libs.androidx.room.runtime.v272)
-    implementation(libs.androidx.room.ktx.v261)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.room.runtime.v261)
+    implementation(libs.androidx.room.ktx)
     kapt("androidx.room:room-compiler:2.7.2")
-    kapt(libs.sqlite.jdbc)
-
-    // ViewBinding in Compose
-    implementation(libs.androidx.ui.viewbinding)
-
-    // Extra UI
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.foundation)
-    implementation(libs.accompanist.flowlayout)
-
-    // RecyclerView + CardView
-    implementation(libs.androidx.recyclerview.v131)
-    implementation(libs.androidx.cardview)
-
-    // Fragment & Material
-    implementation(libs.fragment.ktx)
-    implementation(libs.google.material)
 
 
+    implementation (libs.androidx.material.icons.extended)
 
 
-}
-
-kapt {
-    arguments {
-        arg("room.schemaLocation", "$projectDir/schemas")
-        arg("room.incremental", "true")
-        arg("room.verifySchema", "false")
-        arg("room.disableVerification", "true")
-        arg("room.verifySchemaLocation", "false")
-        arg("room.skipQueryVerification", "true")
-
-    }
 }

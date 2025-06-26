@@ -7,9 +7,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.relearn.app.feature.challenges.ChallengeStatus
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
 import com.relearn.app.feature.challenges.ui.components.ChallengeCard
-import com.relearn.app.feature.challenges.ChallengeViewModel
+import com.relearn.app.ui.components.ChallengeItem
+import com.relearn.app.feature.challenges.viewmodel.ChallengeViewModel
 
 @Composable
 fun ChallengeListScreen(viewModel: ChallengeViewModel) {

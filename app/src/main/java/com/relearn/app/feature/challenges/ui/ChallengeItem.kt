@@ -5,8 +5,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.relearn.app.feature.challenges.Challenge
-import com.relearn.app.feature.challenges.ChallengeStatus
+import com.relearn.app.feature.challenges.domain.model.Challenge
+import com.relearn.app.feature.challenges.domain.model.ChallengeStatus
 
 @Composable
 fun ChallengeItem(
