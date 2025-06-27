@@ -9,11 +9,11 @@ import com.relearn.app.feature.auth.AuthViewModel
 import com.relearn.app.feature.auth.LoginScreen
 import com.relearn.app.feature.auth.ui.HabitsSelectionScreen
 import com.relearn.app.feature.auth.ui.RegisterScreen
-import com.relearn.app.feature.home.ui.HomeScreen
 
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
+    onLoginSuccess: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     var tempEmail by remember { mutableStateOf("") }
@@ -76,9 +76,7 @@ fun AppNavGraph(
         composable("login") {
             LoginScreen(
                 onLoginSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                    }
+                    onLoginSuccess() //  ieșim din AppNavGraph și trecem în aplicația principală
                 },
                 onNavigateToRegister = {
                     navController.navigate("register1") {
@@ -86,10 +84,6 @@ fun AppNavGraph(
                     }
                 }
             )
-        }
-
-        composable("home") {
-            HomeScreen()
         }
     }
 }

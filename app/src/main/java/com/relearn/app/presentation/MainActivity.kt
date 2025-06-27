@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,85 +29,37 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.relearn.app.navigation.AppNavGraph
+import com.relearn.app.navigation.MainNav.BottomBar
+import com.relearn.app.navigation.MainNav.MainNav
+import com.relearn.app.navigation.MainNav.TopBar
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         setContent {
-            ReLearnTheme {
-                val navController = rememberNavController()
-                AppNavGraph(navController = navController)
-            }
+            val rootNavController = rememberNavController()
+            val showMainApp = remember { mutableStateOf(false) }
 
-        }
-//            val viewModel: ChallengeViewModel = hiltViewModel()
-//
-//            ChallengeListScreen(viewModel = viewModel)
-//
-//            ReLearnTheme {
-//
-//                val navController = rememberNavController()
-//                AppNavGraph(navController = navController)
-//
-//                var showAddScreen by remember { mutableStateOf(true) }
-//
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    Column(modifier = Modifier.padding(innerPadding)) {
-//                        if (showAddScreen) {
-//                            AddChallengeScreen(viewModel = viewModel, onViewChallengesClick = { showAddScreen = false })
-//                            Button(
-//                                onClick = { showAddScreen = false },
-//                                modifier = Modifier.padding(16.dp)
-//                            ) {
-//                                Text("Vezi Challenge-uri")
-//                            }
-//                        } else {
-//                            ChallengeListScreen(viewModel = viewModel)
-//                            Button(
-//                                onClick = { showAddScreen = true },
-//                                modifier = Modifier.padding(16.dp)
-//                            ) {
-//                                Text("Adaugă Challenge")
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-        fun testFirebaseConnection() {
-            Firebase.auth.signInWithEmailAndPassword("test@relearn.com", "test1234")
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.d("FirebaseTest", "Login success: ${task.result.user?.uid}")
-                    } else {
-                        Log.e("FirebaseTest", "Login failed", task.exception)
+            if (showMainApp.value) {
+                // Ecranele aplicației principale
+                Scaffold(
+                    topBar = { TopBar(rootNavController) },
+                    bottomBar = { BottomBar(rootNavController) }
+                ) { innerPadding ->
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        MainNav(rootNavController)
                     }
                 }
-        }
-
-        fun testFirestoreWrite() {
-            val db = Firebase.firestore
-            val challenge = hashMapOf(
-                "title" to "Test Challenge",
-                "description" to "This is a test challenge",
-                "completed" to false
-            )
-
-            db.collection("challenges")
-                .add(challenge)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(
-                        "FirestoreTest",
-                        "DocumentSnapshot added with ID: ${documentReference.id}"
-                    )
-                }
-                .addOnFailureListener { e ->
-                    Log.w("FirestoreTest", "Error adding document", e)
-                }
+            } else {
+                // Ecranele de autentificare
+                AppNavGraph(
+                    navController = rootNavController,
+                    onLoginSuccess = { showMainApp.value = true }
+                )
+            }
         }
     }
 }
