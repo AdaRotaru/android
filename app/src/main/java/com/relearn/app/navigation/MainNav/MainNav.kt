@@ -18,7 +18,7 @@ import com.relearn.app.Screens.SettingsScreen
 
 
 @Composable
-fun MainNav(navController: NavHostController) {
+fun MainNav(navController: NavHostController, onLogout: () -> Unit) {
     NavHost(
         navController = navController,
         startDestination = NavRoutes.Home.route
@@ -28,7 +28,9 @@ fun MainNav(navController: NavHostController) {
         composable(NavRoutes.Progress.route) { ProgressScreen() }
         composable(NavRoutes.Settings.route) { SettingsScreen() }
         composable(NavRoutes.Extra.route) { ExtraScreen() }
-        composable(NavRoutes.Profile.route) { ProfileScreen(navController) }
+        composable(NavRoutes.Profile.route) {
+            ProfileScreen(navController = navController, onLogout = onLogout)
+        } }
     }
-}
+
 

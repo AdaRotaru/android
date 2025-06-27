@@ -10,13 +10,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navController: NavController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     TopAppBar(
         title = {
             Text(
@@ -28,7 +34,11 @@ fun TopBar(navController: NavController) {
         actions = {
             IconButton(
                 onClick = {
-                    navController.navigate(NavRoutes.Profile.route)
+                    if (currentRoute == NavRoutes.Profile.route) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(NavRoutes.Profile.route)
+                    }
                 }
             ) {
                 Icon(
@@ -39,3 +49,5 @@ fun TopBar(navController: NavController) {
         }
     )
 }
+
+

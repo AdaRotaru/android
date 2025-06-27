@@ -50,7 +50,10 @@ class MainActivity : ComponentActivity() {
                     bottomBar = { BottomBar(rootNavController) }
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        MainNav(rootNavController)
+                        MainNav(
+                            navController = rootNavController,
+                            onLogout = { showMainApp.value = false }
+                        )
                     }
                 }
             } else {
