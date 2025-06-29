@@ -9,7 +9,11 @@ import com.relearn.app.feature.auth.AuthViewModel
 import com.relearn.app.feature.auth.LoginScreen
 import com.relearn.app.feature.auth.ui.HabitsSelectionScreen
 import com.relearn.app.feature.auth.ui.RegisterScreen
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import androidx.compose.animation.*
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
@@ -22,9 +26,13 @@ fun AppNavGraph(
     var tempLastName by remember { mutableStateOf("") }
     var tempGender by remember { mutableStateOf("F") }
 
-    NavHost(
+    AnimatedNavHost(
         navController = navController,
-        startDestination = "register1"
+        startDestination = "register1",
+        enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }) },
+        popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }) },
+        popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }) }
     ) {
         composable("register1") {
             RegisterScreen(

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,10 +33,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun HabitsSelectionScreen(
     onContinue: (List<String>) -> Unit
 ) {
+    val accentColor = Color(0xFFBA68C8)
+    val backgroundColor = Color(0xFFFFF7FA)
+    val textColor = Color(0xFF444444)
+    val cardBackground = Color.White.copy(alpha = 0.95f)
+    val buttonColor = Color(0xFFAB47BC)
+
     val habitCategories = listOf(
         "🧠 Stres & emoții" to listOf("Anxietate", "Oboseală", "Auto-critică"),
         "🎯 Focus & motivație" to listOf("Procrastinare", "Lipsă de focus", "Demotivare"),
@@ -46,102 +54,115 @@ fun HabitsSelectionScreen(
     val selectedHabits = remember { mutableStateListOf<String>() }
     var showWarning by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            // Header fix (titlu + subtitlu + counter)
-            Column(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Text(
+                text = "Hai să începem cu pași mici!",
+                style = MaterialTheme.typography.headlineMedium,
+                color = accentColor
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Ce obiceiuri vrei să îmbunătățești?",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color(0xFF807BA2)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "${selectedHabits.size}/3 selectate",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Card(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .padding(top = 80.dp) // spațiu mai mare sus
-                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .weight(1f),
+                shape = RoundedCornerShape(24.dp),
+                elevation = CardDefaults.cardElevation(8.dp),
+                colors = CardDefaults.cardColors(containerColor = cardBackground)
             ) {
-                Text(
-                    text = "Hai să începem cu pași mici!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color(0xFFD02541)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Ce obiceiuri vrei să îmbunătățești?",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color(0xFF807BA2)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "${selectedHabits.size}/3 selectate",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
-            }
-
-            // Scrollabil: lista și buton
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(top = 16.dp, bottom = 100.dp, start = 24.dp, end = 24.dp)
-            ) {
-                habitCategories.forEach { (category, habits) ->
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = category,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color(0xFF4A7B9D)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    habits.forEach { habit ->
-                        val isSelected = habit in selectedHabits
-                        FilterChip(
-                            selected = isSelected,
-                            onClick = {
-                                if (isSelected) {
-                                    selectedHabits.remove(habit)
-                                } else {
-                                    if (selectedHabits.size < 3) {
-                                        selectedHabits.add(habit)
-                                    } else {
-                                        showWarning = true
-                                    }
-                                }
-                            },
-                            label = { Text(habit) },
-                            modifier = Modifier
-                                .padding(end = 8.dp, bottom = 8.dp),
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Color(0xFFB57BA6),
-                                selectedLabelColor = Color.White
-                            )
+                Column(
+                    modifier = Modifier
+                        .padding(24.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    habitCategories.forEach { (category, habits) ->
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = category,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = accentColor
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        habits.forEach { habit ->
+                            val isSelected = habit in selectedHabits
+                            FilterChip(
+                                selected = isSelected,
+                                onClick = {
+                                    if (isSelected) {
+                                        selectedHabits.remove(habit)
+                                    } else {
+                                        if (selectedHabits.size < 3) {
+                                            selectedHabits.add(habit)
+                                        } else {
+                                            showWarning = true
+                                        }
+                                    }
+                                },
+                                label = { Text(habit) },
+                                modifier = Modifier
+                                    .padding(end = 8.dp, bottom = 8.dp),
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = accentColor,
+                                    selectedLabelColor = Color.White
+                                )
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = { onContinue(selectedHabits.toList()) },
+                        enabled = selectedHabits.isNotEmpty(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = buttonColor,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Creează cont")
                     }
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(
-                    onClick = { onContinue(selectedHabits.toList()) },
-                    enabled = selectedHabits.isNotEmpty(),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFD02541),
-                        contentColor = Color.White
-                    )
-                ) {
-                    Text("Creează cont")
-                }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // Card de avertizare centrat pe ecran (indiferent de scroll)
         if (showWarning) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(0x66000000)) // semi-transparent overlay
-                    .clickable(enabled = false) {} // previne clic pe fundal
+                    .background(Color(0x66000000))
+                    .clickable(enabled = false) {}
             ) {
                 Card(
                     modifier = Modifier

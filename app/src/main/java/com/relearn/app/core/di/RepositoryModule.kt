@@ -2,8 +2,7 @@ package com.relearn.app.core.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.relearn.app.feature.challenges.domain.repository.IChallengeRepository
-import com.relearn.app.core.data.RemoteChallengeRepository
+import com.relearn.app.feature.HOME.repository.ChallengeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,5 +25,5 @@ object RepositoryModule {
     @Singleton
     fun provideChallengeRepository(
         firestore: FirebaseFirestore
-    ): IChallengeRepository = RemoteChallengeRepository(firestore)
+    ): ChallengeRepository = ChallengeRepository(firestore)
 }
