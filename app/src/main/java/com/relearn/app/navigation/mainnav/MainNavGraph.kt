@@ -8,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.firebase.auth.FirebaseAuth
 import com.relearn.app.Screens.ExtraScreen
-import com.relearn.app.Screens.JournalScreen
 import com.relearn.app.Screens.ProfileScreen
 import com.relearn.app.Screens.ProgressScreen
 import com.relearn.app.Screens.SettingsScreen
@@ -16,6 +15,8 @@ import com.relearn.app.feature.HOME.ui.HomeScreen
 import com.relearn.app.feature.HOME.viewmodel.ChallengeViewModel
 import com.relearn.app.feature.HOME.viewmodel.CheckInViewModel
 import com.relearn.app.feature.HOME.viewmodel.ToDoViewModel
+import com.relearn.app.feature.HOME.viewmodel.UserPreferencesViewModel
+import com.relearn.app.feature.journal.JournalScreen
 
 
 @Composable
@@ -24,8 +25,10 @@ fun MainNav(navController: NavHostController, onLogout: () -> Unit) {
     val challengeViewModel: ChallengeViewModel = hiltViewModel()
     val toDoViewModel: ToDoViewModel = hiltViewModel()
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    val userPreferencesViewModel: UserPreferencesViewModel = hiltViewModel()
 
-        NavHost(
+
+    NavHost(
             navController = navController,
             startDestination = NavRoutes.Home.route
         ) {
@@ -34,6 +37,7 @@ fun MainNav(navController: NavHostController, onLogout: () -> Unit) {
                     checkInViewModel = checkInViewModel,
                     challengeViewModel = challengeViewModel,
                     toDoViewModel = toDoViewModel,
+                    userPreferencesViewModel = userPreferencesViewModel,
                     userId = userId
                 )
             }

@@ -1,42 +1,79 @@
 package com.relearn.app.feature.HOME.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.relearn.app.feature.HOME.viewmodel.CheckInViewModel
 import com.relearn.app.feature.HOME.viewmodel.ChallengeViewModel
 import com.relearn.app.feature.HOME.viewmodel.ToDoViewModel
 import com.relearn.app.feature.HOME.ui.components.CheckInCard
 import com.relearn.app.feature.HOME.ui.components.ChallengeCard
 import com.relearn.app.feature.HOME.ui.components.ToDoSection
+import com.relearn.app.feature.HOME.viewmodel.UserPreferencesViewModel
+import java.time.LocalDate
 
 @Composable
 fun HomeScreen(
     checkInViewModel: CheckInViewModel,
     challengeViewModel: ChallengeViewModel,
     toDoViewModel: ToDoViewModel,
+    userPreferencesViewModel: UserPreferencesViewModel,
     userId: String
 ) {
+    Log.d("HomeScreen", "userId = $userId")
+    LaunchedEffect(Unit) {
+        toDoViewModel.loadTasks(userId)
+        checkInViewModel.loadCheckInForToday(userId, LocalDate.now().toEpochDay())
+        userPreferencesViewModel.loadUserPreferences(userId)
+    }
     val backgroundColor = Color(0xFFFFF7FA)
     val scrollState = rememberScrollState()
 
+    val userHabits by userPreferencesViewModel.habits.collectAsState()
     val checkIn by checkInViewModel.checkIn.collectAsState()
-    val challenges by challengeViewModel.challenges.collectAsState()
-    val tasks by toDoViewModel.tasks.collectAsState()
+    Log.d("HomeScreen", "checkIn: $checkIn, userHabits: $userHabits")
 
-    // mock user habits - to be replaced with real data from Firestore
-    val userHabits = remember { listOf("Fumat", "Procrastinare", "Scroll excesiv") }
+    val challenges by challengeViewModel.challenges.collectAsState()
+    val challengeError by challengeViewModel.error.collectAsState()
+
+    if (challengeError != null) {
+        Text(
+            text = "Eroare: $challengeError",
+            color = Color.Red,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+    Log.d("HomeScreen", "Challenges in state: ${challenges.size}")
+
+    val tasks by toDoViewModel.tasks.collectAsState()
+    LaunchedEffect(tasks) {
+        Log.d("HomeScreen", "Tasks updated: size=${tasks.size}, tasks=$tasks")
+    }
     val isSubmitting by checkInViewModel.isSubmitting.collectAsState()
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { checkIn to userHabits }
+            .collect { (checkInValue, habits) ->
+                Log.d("HomeScreen", "snapshotFlow triggered: checkIn=$checkInValue, habits=$habits, challenges=${challenges.size}")
+                if (checkInValue != null && habits.isNotEmpty() && challenges.isEmpty()) {
+                    Log.d("HomeScreen", "Triggering challengeViewModel.loadChallenges()")
+                    challengeViewModel.setContext(checkInValue, habits)
+                    challengeViewModel.loadChallenges()
+                }
+            }
+    }
 
     Column(
         modifier = Modifier
@@ -46,23 +83,43 @@ fun HomeScreen(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        CheckInCard(
-            onSubmit = { mood, energy ->
-                checkInViewModel.submitCheckIn(userId, mood, energy)
+        if (checkIn == null) {
+            CheckInCard(
+                onSubmit = { mood, energy ->
+                    checkInViewModel.submitCheckIn(userId, mood, energy)
+                }
+            )
+            if (isSubmitting) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-        )
-        if (isSubmitting) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+        } else {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .background(
+                        color = Color(0xFFCFD9FF),
+                        shape = RoundedCornerShape(50)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = "✔ Check-in completat",
+                    color = Color(0xFF4A4A68),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
 
-        if (checkIn != null) {
-            challengeViewModel.setContext(checkIn!!, userHabits)
-            challengeViewModel.loadChallenges()
-        }
 
         Text(
-            text = "Provocări pentru azi",
-            style = MaterialTheme.typography.titleMedium,
+            text = "🌸 Provocări pentru azi",
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            ),
+            color = Color(0xFF7B1FA2),
             modifier = Modifier.padding(start = 8.dp)
         )
 
@@ -78,11 +135,7 @@ fun HomeScreen(
             )
         }
 
-        Text(
-            text = "Task-uri personale",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(start = 8.dp)
-        )
+        Spacer(modifier = Modifier.height(8.dp))
 
         ToDoSection(
             tasks = tasks,
@@ -90,6 +143,5 @@ fun HomeScreen(
             onToggleDone = { task -> toDoViewModel.toggleTaskDone(userId, task) },
             onDelete = { taskId -> toDoViewModel.deleteTask(userId, taskId) }
         )
-
     }
 }

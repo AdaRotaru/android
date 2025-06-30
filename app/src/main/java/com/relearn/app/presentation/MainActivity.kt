@@ -21,13 +21,17 @@ import com.relearn.app.navigation.mainnav.TopBar
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //com.relearn.app.feature.HOME.data.ChallengeSeeder.seedChallenges()
         setContent {
             val rootNavController = rememberNavController()
             val showMainApp = remember { mutableStateOf(false) }
 
+            //  dacă e deja logat cineva
+            val firebaseUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+            if (firebaseUser != null) {
+                showMainApp.value = true
+            }
+
             if (showMainApp.value) {
-                // Ecranele aplicației principale
                 Scaffold(
                     topBar = { TopBar(rootNavController) },
                     bottomBar = { BottomBar(rootNavController) }
@@ -35,12 +39,14 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(innerPadding)) {
                         MainNav(
                             navController = rootNavController,
-                            onLogout = { showMainApp.value = false }
+                            onLogout = {
+                                com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+                                showMainApp.value = false
+                            }
                         )
                     }
                 }
             } else {
-                // Ecranele de autentificare
                 AppNavGraph(
                     navController = rootNavController,
                     onLoginSuccess = { showMainApp.value = true }

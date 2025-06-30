@@ -31,11 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.relearn.app.feature.auth.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
 fun HabitsSelectionScreen(
+    authViewModel: AuthViewModel,
     onContinue: (List<String>) -> Unit
 ) {
     val accentColor = Color(0xFFBA68C8)
@@ -139,7 +141,9 @@ fun HabitsSelectionScreen(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = { onContinue(selectedHabits.toList()) },
+                        onClick = {
+                            onContinue(selectedHabits.toList())
+                        },
                         enabled = selectedHabits.isNotEmpty(),
                         modifier = Modifier
                             .fillMaxWidth()

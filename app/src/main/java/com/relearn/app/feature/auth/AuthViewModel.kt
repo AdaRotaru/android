@@ -1,10 +1,17 @@
 package com.relearn.app.feature.auth
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+
+
 sealed class AuthState {
     object Idle : AuthState()
     object Loading : AuthState()
@@ -14,7 +21,8 @@ sealed class AuthState {
 }
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
@@ -27,18 +35,17 @@ class AuthViewModel @Inject constructor(
         lastName: String,
         gender: String,
         preferences: List<String>,
-        onResult: (Boolean, String?) -> Unit
+        onResult: (Boolean) -> Unit
     ) {
-        authRepository.register(
-            email = email,
-            password = password,
-            firstName = firstName,
-            lastName = lastName,
-            gender = gender,
-            preferences = preferences,
-            onResult = onResult
-        )
+        _authState.value = AuthState.Loading
+
+        authRepository.register(email, password, firstName, lastName, gender, preferences) { success, error ->
+            _authState.value = if (success) AuthState.RegisterSuccess else AuthState.Error(error ?: "Eroare")
+            onResult(success)
+        }
     }
+
+
 
 
     fun login(email: String, password: String) {
@@ -59,4 +66,6 @@ class AuthViewModel @Inject constructor(
     }
 
     fun isUserLoggedIn(): Boolean = authRepository.isUserLoggedIn()
+
+
 }

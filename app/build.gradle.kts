@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.foundation.android)
+    implementation(libs.firebase.crashlytics.buildtools)
 
     debugImplementation(libs.ui.tooling)
 
@@ -77,16 +78,15 @@ dependencies {
 
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.32.0")
-
-
-
-
-
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.lifecycle.runtime.ktx.v262)
+    implementation(libs.accompanist.navigation.animation)
+    implementation(libs.material3)
 
     implementation (libs.androidx.material.icons.extended)
 
-
+    implementation(libs.ktor.client.core)
+    implementation("io.ktor:ktor-client-cio:2.3.4")
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 }

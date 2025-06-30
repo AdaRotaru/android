@@ -1,5 +1,6 @@
 package com.relearn.app.feature.HOME.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.relearn.app.feature.HOME.model.PersonalTask
@@ -22,7 +23,8 @@ class ToDoViewModel @Inject constructor(
     fun loadTasks(userId: String) {
         viewModelScope.launch {
             val result = repository.getTasks(userId)
-            _tasks.value = result
+            Log.d("ToDoViewModel", "loadTasks result size=${result.size}")
+            _tasks.value = result.toList()
         }
     }
 
@@ -48,8 +50,10 @@ class ToDoViewModel @Inject constructor(
     fun toggleTaskDone(userId: String, task: PersonalTask) {
         val updatedTask = task.copy(isDone = !task.isDone)
         viewModelScope.launch {
+            Log.d("ToDoViewModel", "toggleTaskDone called for task id=${task.id}, current isDone=${task.isDone}")
             repository.updateTask(updatedTask)
-            loadTasks(userId)
+            loadTasks(userId) // reincarcă si emite lista actualizata
         }
     }
+
 }

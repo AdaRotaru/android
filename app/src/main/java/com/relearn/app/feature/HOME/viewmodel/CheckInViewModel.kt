@@ -10,10 +10,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class CheckInViewModel @Inject constructor(
+class CheckInViewModel @Inject constructor( //functia care primeste 3 parametri
     private val repository: CheckInRepository
 ) : ViewModel() {
 
@@ -24,17 +25,18 @@ class CheckInViewModel @Inject constructor(
     val isSubmitting: StateFlow<Boolean> = _isSubmitting
 
     fun submitCheckIn(userId: String, mood: String, energyLevel: Int) {
-        val checkInEntry = DailyCheckIn(
+        val checkInEntry = DailyCheckIn( //creem un obiect dailyCheckIn cu valorile primite
             userId = userId,
             mood = mood,
-            energyLevel = energyLevel
+            energyLevel = energyLevel,
+            date = LocalDate.now().toEpochDay()
         )
 
-        viewModelScope.launch {
+        viewModelScope.launch {//un coroutine necesar pentru apeluri asincrone plicația rămâne fluidă, iar datele se procesează în fundal
             Log.d("CheckInVM", "submitCheckIn: $checkInEntry")
             _isSubmitting.value = true
             try {
-                repository.saveCheckIn(checkInEntry)
+                repository.saveCheckIn(checkInEntry) //salveaza obiectul in db
                 _checkIn.value = checkInEntry
                 Log.d("CheckInVM", "Check-in saved successfully")
             } catch (e: Exception) {

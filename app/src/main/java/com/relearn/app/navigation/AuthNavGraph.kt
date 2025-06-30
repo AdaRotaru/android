@@ -62,24 +62,26 @@ fun AppNavGraph(
             val email = backStackEntry?.savedStateHandle?.get<String>("email") ?: ""
             val password = backStackEntry?.savedStateHandle?.get<String>("password") ?: ""
 
-            HabitsSelectionScreen(onContinue = { selectedHabits ->
-                authViewModel.register(
-                    email = email,
-                    password = password,
-                    firstName = firstName,
-                    lastName = lastName,
-                    gender = gender,
-                    preferences = selectedHabits,
-                    onResult = { success, _ ->
-                        if (success) {
-                            navController.navigate("login") {
-                                popUpTo("register1") { inclusive = true }
+            HabitsSelectionScreen(
+                authViewModel = authViewModel,
+                onContinue = { selectedHabits ->
+                    authViewModel.register(
+                        email = email,
+                        password = password,
+                        firstName = firstName,
+                        lastName = lastName,
+                        gender = gender,
+                        preferences = selectedHabits,
+                        onResult = { success ->
+                            if (success) {
+                                navController.navigate("login") {
+                                    popUpTo("register1") { inclusive = true }
+                                }
                             }
                         }
-                    }
-                )
-            })
-        }
+                    )
+                }
+            )}
 
         composable("login") {
             LoginScreen(
