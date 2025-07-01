@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -21,7 +22,8 @@ fun ChallengeItem(
     challenge: Challenge,
     onComplete: () -> Unit,
     onSkip: () -> Unit,
-    isCompleted: Boolean = false
+    isCompleted: Boolean = false,
+    onDelete: (() -> Unit)? = null
 ) {
     val bgColor = if (isCompleted) Color(0xFFE2DDE0) else Color(0xFFFFEBF8)
 
@@ -35,12 +37,26 @@ fun ChallengeItem(
     ) {
         Box(modifier = Modifier.padding(16.dp)) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                // Titlu mereu vizibil
-                Text(
-                    text = challenge.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF4A4A68)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = challenge.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFF4A4A68)
+                    )
+                    if (isCompleted && challenge.categorie == "Auto" && onDelete != null) {
+                        IconButton(onClick = onDelete) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Șterge provocarea",
+                                tint = Color(0xFF8C5A96)
+                            )
+                        }
+                    }
+                }
 
                 if (!isCompleted) {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -65,7 +81,6 @@ fun ChallengeItem(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Săgeată stânga jos
                         TextButton(onClick = onSkip) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
@@ -76,7 +91,6 @@ fun ChallengeItem(
                             Text("Alta")
                         }
 
-                        // Buton Finalizează
                         Button(
                             onClick = onComplete,
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFB57BA6))
@@ -85,7 +99,6 @@ fun ChallengeItem(
                         }
                     }
                 }
-
             }
         }
     }

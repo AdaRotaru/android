@@ -69,5 +69,20 @@ class ChallengeRepository @Inject constructor(
             null
         }
     }
+    suspend fun getJournalChallenges(): List<Challenge> {
+        return try {
+            challengesRef
+                .whereEqualTo("categorie", "Journal")
+                .get()
+                .await()
+                .documents
+                .mapNotNull { it.toObject<Challenge>() }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+    suspend fun deleteChallenge(challengeId: String) {
+        challengesRef.document(challengeId).delete().await()
+    }
 
 }

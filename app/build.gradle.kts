@@ -86,7 +86,8 @@ dependencies {
     implementation (libs.androidx.material.icons.extended)
 
     implementation(libs.ktor.client.core)
-    implementation("io.ktor:ktor-client-cio:2.3.4")
+    implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+    implementation (libs.accompanist.swiperefresh.v0332alpha)
 }

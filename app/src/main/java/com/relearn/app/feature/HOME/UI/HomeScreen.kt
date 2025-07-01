@@ -14,12 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.relearn.app.feature.HOME.viewmodel.CheckInViewModel
-import com.relearn.app.feature.HOME.viewmodel.ChallengeViewModel
-import com.relearn.app.feature.HOME.viewmodel.ToDoViewModel
-import com.relearn.app.feature.HOME.ui.components.CheckInCard
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.relearn.app.feature.HOME.ui.components.ChallengeCard
+import com.relearn.app.feature.HOME.ui.components.CheckInCard
 import com.relearn.app.feature.HOME.ui.components.ToDoSection
+import com.relearn.app.feature.HOME.viewmodel.ChallengeViewModel
+import com.relearn.app.feature.HOME.viewmodel.CheckInViewModel
+import com.relearn.app.feature.HOME.viewmodel.ToDoViewModel
 import com.relearn.app.feature.HOME.viewmodel.UserPreferencesViewModel
 import java.time.LocalDate
 
@@ -37,31 +39,22 @@ fun HomeScreen(
         checkInViewModel.loadCheckInForToday(userId, LocalDate.now().toEpochDay())
         userPreferencesViewModel.loadUserPreferences(userId)
     }
+
     val backgroundColor = Color(0xFFFFF7FA)
     val scrollState = rememberScrollState()
 
     val userHabits by userPreferencesViewModel.habits.collectAsState()
     val checkIn by checkInViewModel.checkIn.collectAsState()
-    Log.d("HomeScreen", "checkIn: $checkIn, userHabits: $userHabits")
-
     val challenges by challengeViewModel.challenges.collectAsState()
     val challengeError by challengeViewModel.error.collectAsState()
-
-    if (challengeError != null) {
-        Text(
-            text = "Eroare: $challengeError",
-            color = Color.Red,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(8.dp)
-        )
-    }
-    Log.d("HomeScreen", "Challenges in state: ${challenges.size}")
-
     val tasks by toDoViewModel.tasks.collectAsState()
+    val isSubmitting by checkInViewModel.isSubmitting.collectAsState()
+    val isRefreshing by challengeViewModel.isLoading.collectAsState()
+    val refreshState = rememberSwipeRefreshState(isRefreshing)
+
     LaunchedEffect(tasks) {
         Log.d("HomeScreen", "Tasks updated: size=${tasks.size}, tasks=$tasks")
     }
-    val isSubmitting by checkInViewModel.isSubmitting.collectAsState()
 
     LaunchedEffect(Unit) {
         snapshotFlow { checkIn to userHabits }
@@ -75,73 +68,84 @@ fun HomeScreen(
             }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(backgroundColor)
-            .verticalScroll(scrollState)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    SwipeRefresh(
+        state = refreshState,
+        onRefresh = { challengeViewModel.refreshChallenges() }
     ) {
-        if (checkIn == null) {
-            CheckInCard(
-                onSubmit = { mood, energy ->
-                    checkInViewModel.submitCheckIn(userId, mood, energy)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(backgroundColor)
+                .verticalScroll(scrollState)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            if (checkIn == null) {
+                CheckInCard(
+                    onSubmit = { mood, energy ->
+                        checkInViewModel.submitCheckIn(userId, mood, energy)
+                    }
+                )
+                if (isSubmitting) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
-            )
-            if (isSubmitting) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-        } else {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .background(
-                        color = Color(0xFFCFD9FF),
-                        shape = RoundedCornerShape(50)
+            } else {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .background(
+                            color = Color(0xFFCFD9FF),
+                            shape = RoundedCornerShape(50)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = "✔ Check-in completat",
+                        color = Color(0xFF4A4A68),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.align(Alignment.Center)
                     )
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
-            ) {
+                }
+            }
+
+            Text(
+                text = "🌸 Provocări pentru azi",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                ),
+                color = Color(0xFF7B1FA2),
+                modifier = Modifier.padding(start = 8.dp)
+            )
+
+            if (challengeError != null) {
                 Text(
-                    text = "✔ Check-in completat",
-                    color = Color(0xFF4A4A68),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.align(Alignment.Center)
+                    text = "Eroare: $challengeError",
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(8.dp)
                 )
             }
-        }
 
+            challenges.forEach { challenge ->
+                ChallengeCard(
+                    challenge = challenge,
+                    onToggleCompleted = { challengeViewModel.completeChallenge(challenge.id) },
+                    onSkip = { challengeViewModel.skipChallenge(challenge.id) },
+                    onRemove = {
+                        challengeViewModel.removeChallengeFromUI(challenge.id)
+                    }
+                )
+            }
 
-        Text(
-            text = "🌸 Provocări pentru azi",
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            ),
-            color = Color(0xFF7B1FA2),
-            modifier = Modifier.padding(start = 8.dp)
-        )
+            Spacer(modifier = Modifier.height(8.dp))
 
-        challenges.take(2).forEach { challenge ->
-            ChallengeCard(
-                challenge = challenge,
-                onToggleCompleted = {
-                    challengeViewModel.completeChallenge(challenge.id)
-                },
-                onSkip = {
-                    challengeViewModel.skipChallenge(challenge.id)
-                }
+            ToDoSection(
+                userId = userId,
+                tasks = tasks,
+                onAdd = { title -> toDoViewModel.addTask(userId, title) },
+                onToggleDone = { task -> toDoViewModel.toggleTaskDone(userId, task) },
+                onDelete = { taskId -> toDoViewModel.deleteTask(userId, taskId) }
             )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ToDoSection(
-            tasks = tasks,
-            onAdd = { title -> toDoViewModel.addTask(userId, title) },
-            onToggleDone = { task -> toDoViewModel.toggleTaskDone(userId, task) },
-            onDelete = { taskId -> toDoViewModel.deleteTask(userId, taskId) }
-        )
-    }
-}
+}}}

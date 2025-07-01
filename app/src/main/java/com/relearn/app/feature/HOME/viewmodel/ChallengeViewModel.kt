@@ -46,7 +46,6 @@ class ChallengeViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d("ChallengeVM", "loadChallenges CALLED – context")
 
-
             _isLoading.value = true
             try {
                 Log.d("ChallengeVM", "Fetching challenges with mood=${checkIn.mood}, energy=${checkIn.energyLevel}, habits=$habits, difficulty=$difficulty")
@@ -56,13 +55,15 @@ class ChallengeViewModel @Inject constructor(
                     difficulty = difficulty,
                     mood = moodLabel,
                     energy = checkIn.energyLevel
-                )
-                Log.d("ChallengeVM", "result called with mood=${checkIn.mood}, energy=${checkIn.energyLevel}, habits=$habits, difficulty=$difficulty")
+                ).toMutableList()
+
+                val journalExtras = repository.getJournalChallenges()
+                result.addAll(journalExtras)
 
                 _challenges.value = result
-                Log.d("ChallengeVM", "Loaded challenges: ${result.size}")
+                Log.d("ChallengeVM", "Loaded total challenges: ${result.size}")
                 _error.value = null
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 Log.e("ChallengeVM", "Eroare la loadChallenges", e)
                 _error.value = e.message
             } finally {
@@ -72,12 +73,24 @@ class ChallengeViewModel @Inject constructor(
     }
 
 
+
     fun completeChallenge(challengeId: String) {
         viewModelScope.launch {
-            repository.markChallengeCompleted(challengeId)
-            loadChallenges()
+            val updatedList = _challenges.value.toMutableList()
+            val index = updatedList.indexOfFirst { it.id == challengeId }
+            if (index != -1) {
+                val target = updatedList[index]
+                if (target.categorie == "Auto") {
+                    updatedList.removeAt(index)
+                } else {
+                    repository.markChallengeCompleted(challengeId)
+                    updatedList[index] = target.copy(status = ChallengeStatus.COMPLETED)
+                }
+                _challenges.value = updatedList
+            }
         }
     }
+
 
     fun skipChallenge(challengeId: String) {
         viewModelScope.launch {
@@ -113,5 +126,12 @@ class ChallengeViewModel @Inject constructor(
         else -> mood
     }
 
-
+    fun refreshChallenges() {
+        if (currentCheckIn != null && currentHabits.isNotEmpty()) {
+            loadChallenges()
+        }
+    }
+    fun removeChallengeFromUI(challengeId: String) {
+        _challenges.value = _challenges.value.filterNot { it.id == challengeId }
+    }
 }

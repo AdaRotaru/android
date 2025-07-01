@@ -102,7 +102,8 @@ Răspunde exact cu un singur cuvânt. Nu adăuga alt text.
                 append("Authorization", "Bearer $apiKey")
                 append("Content-Type", "application/json")
             }
-            setBody(Json.encodeToString(requestBody))
+            contentType(ContentType.Application.Json)
+            setBody(requestBody.toString())
         }.bodyAsText()
 
         val json = Json.parseToJsonElement(response).jsonObject

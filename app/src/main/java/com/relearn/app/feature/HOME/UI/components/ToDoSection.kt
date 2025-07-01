@@ -17,6 +17,7 @@ import androidx.compose.material3.TextFieldDefaults
 
 @Composable
 fun ToDoSection(
+    userId: String,
     tasks: List<PersonalTask>,
     onAdd: (String) -> Unit,
     onToggleDone: (PersonalTask) -> Unit,
