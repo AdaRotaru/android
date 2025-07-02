@@ -1,7 +1,6 @@
 [versions]
 accompanistNavigationAnimation = "0.32.0"
 accompanistSwiperefresh = "<latest_version>"
-accompanistSwiperefreshVersion = "0.33.2-alpha"
 activityComposeVersion = "1.9.0"
 agp = "8.8.1"
 androidxLifecycleRuntimeKtx = "2.6.2"
@@ -11,6 +10,7 @@ firebaseBom = "33.15.0"
 hiltAndroid = "2.48"
 hiltCompiler = "2.48"
 hiltNavigationCompose = "1.2.0"
+konfettiCompose = "2.0.2"
 kotlin = "2.0.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -40,7 +40,6 @@ firebaseCrashlyticsBuildtools = "3.0.4"
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanistNavigationAnimation" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
-accompanist-swiperefresh-v0332alpha = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefreshVersion" }
 androidx-activity-compose-v190 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-ktx-v1131 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
@@ -76,6 +75,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+konfetti-compose = { module = "nl.dionsegijn:konfetti-compose", version.ref = "konfettiCompose" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorClientContentNegotiation" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }

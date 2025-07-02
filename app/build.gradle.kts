@@ -89,5 +89,7 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation (libs.accompanist.swiperefresh.v0332alpha)
+    implementation ("com.google.accompanist:accompanist-swiperefresh:0.33.2-alpha")
+    implementation (libs.konfetti.compose)
+
 }

@@ -17,7 +17,8 @@ data class Challenge(
     val categorie: String = "",
     val nivel: DifficultyLevel = DifficultyLevel.STARTER,
     val activ: Boolean = true,
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val date: Long = 0L
 ) : Parcelable
 
 

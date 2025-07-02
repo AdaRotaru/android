@@ -1,26 +1,25 @@
-
 package com.relearn.app.feature.HOME.ui.components
 
-import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.relearn.app.feature.HOME.model.Challenge
-import com.relearn.app.feature.HOME.model.ChallengeStatus
-
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.delay
 
 @Composable
 fun ChallengeCard(
@@ -29,29 +28,52 @@ fun ChallengeCard(
     onSkip: () -> Unit,
     onRemove: (() -> Unit)? = null
 ) {
-    Column {
-        ChallengeItem(
-            challenge = challenge,
-            onComplete = onToggleCompleted,
-            onSkip = onSkip,
-            isCompleted = challenge.status == ChallengeStatus.COMPLETED,
-            onDelete = onRemove
-        )
-        if (challenge.status == ChallengeStatus.COMPLETED) {
-            Row(
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        Dialog(
+            onDismissRequest = {
+                showDialog = false
+            }
+        ) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(24.dp)
+                    .background(Color.White, shape = MaterialTheme.shapes.medium)
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Felicitări pentru finalizarea acestei provocări! Continuă să te bucuri de progresul tău.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF6D6D6D),
-                    modifier = Modifier.weight(1f)
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "🎉 Felicitări!",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color(0xFF7B1FA2)
+                    )
+                    Text(
+                        text = "Ai finalizat provocarea cu succes!",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(top = 12.dp)
+                    )
+                }
             }
         }
+
+        LaunchedEffect(Unit) {
+            delay(2000)
+            onRemove?.invoke()
+            showDialog = false
+        }
+    } else {
+        ChallengeItem(
+            challenge = challenge,
+            onComplete = {
+                showDialog = true
+                onToggleCompleted()
+            },
+            onSkip = onSkip,
+            isCompleted = false,
+            onDelete = null
+        )
     }
 }

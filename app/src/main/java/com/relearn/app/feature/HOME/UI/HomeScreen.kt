@@ -34,7 +34,9 @@ fun HomeScreen(
     userId: String
 ) {
     Log.d("HomeScreen", "userId = $userId")
+
     LaunchedEffect(Unit) {
+        Log.d("HomeScreen", "Loading initial data for userId=$userId")
         toDoViewModel.loadTasks(userId)
         checkInViewModel.loadCheckInForToday(userId, LocalDate.now().toEpochDay())
         userPreferencesViewModel.loadUserPreferences(userId)
@@ -56,21 +58,34 @@ fun HomeScreen(
         Log.d("HomeScreen", "Tasks updated: size=${tasks.size}, tasks=$tasks")
     }
 
-    LaunchedEffect(Unit) {
-        snapshotFlow { checkIn to userHabits }
-            .collect { (checkInValue, habits) ->
-                Log.d("HomeScreen", "snapshotFlow triggered: checkIn=$checkInValue, habits=$habits, challenges=${challenges.size}")
-                if (checkInValue != null && habits.isNotEmpty() && challenges.isEmpty()) {
-                    Log.d("HomeScreen", "Triggering challengeViewModel.loadChallenges()")
-                    challengeViewModel.setContext(checkInValue, habits)
-                    challengeViewModel.loadChallenges()
-                }
-            }
+    LaunchedEffect(checkIn, userHabits) {
+        Log.d("HomeScreen", "CheckIn or habits changed. CheckIn=$checkIn, habits=$userHabits")
+        if (checkIn != null && userHabits.isNotEmpty()) {
+            Log.d("HomeScreen", "Triggering challengeViewModel.loadChallenges()")
+            challengeViewModel.setContext(userId, checkIn!!, userHabits)
+            challengeViewModel.loadChallenges()
+        }
+    }
+
+    LaunchedEffect(challenges) {
+        Log.d("HomeScreen", "Challenges updated: size=${challenges.size}")
+        challenges.forEach {
+            Log.d("HomeScreen", "Challenge: id=${it.id}, title=${it.title}, status=${it.status}, categorie=${it.categorie}")
+        }
+    }
+
+    LaunchedEffect(challengeError) {
+        challengeError?.let {
+            Log.e("HomeScreen", "Challenge loading error: $it")
+        }
     }
 
     SwipeRefresh(
         state = refreshState,
-        onRefresh = { challengeViewModel.refreshChallenges() }
+        onRefresh = {
+            Log.d("HomeScreen", "Swipe to refresh triggered")
+            challengeViewModel.refreshChallenges()
+        }
     ) {
         Column(
             modifier = Modifier
@@ -83,6 +98,7 @@ fun HomeScreen(
             if (checkIn == null) {
                 CheckInCard(
                     onSubmit = { mood, energy ->
+                        Log.d("HomeScreen", "Submitting check-in: mood=$mood, energy=$energy")
                         checkInViewModel.submitCheckIn(userId, mood, energy)
                     }
                 )
@@ -119,21 +135,29 @@ fun HomeScreen(
                 modifier = Modifier.padding(start = 8.dp)
             )
 
-            if (challengeError != null) {
+            if (challenges.isEmpty() && challengeError == null) {
                 Text(
-                    text = "Eroare: $challengeError",
-                    color = Color.Red,
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "Nu există provocări disponibile momentan.",
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(8.dp)
                 )
             }
 
             challenges.forEach { challenge ->
+                Log.d("HomeScreen", "Displaying challenge: ${challenge.title} with id=${challenge.id}")
                 ChallengeCard(
                     challenge = challenge,
-                    onToggleCompleted = { challengeViewModel.completeChallenge(challenge.id) },
-                    onSkip = { challengeViewModel.skipChallenge(challenge.id) },
+                    onToggleCompleted = {
+                        Log.d("HomeScreen", "Completing challenge id=${challenge.id}")
+                        challengeViewModel.completeChallenge(challenge.id)
+                    },
+                    onSkip = {
+                        Log.d("HomeScreen", "Skipping challenge id=${challenge.id}")
+                        challengeViewModel.skipChallenge(challenge.id)
+                    },
                     onRemove = {
+                        Log.d("HomeScreen", "Removing challenge id=${challenge.id} from UI")
                         challengeViewModel.removeChallengeFromUI(challenge.id)
                     }
                 )
@@ -144,8 +168,19 @@ fun HomeScreen(
             ToDoSection(
                 userId = userId,
                 tasks = tasks,
-                onAdd = { title -> toDoViewModel.addTask(userId, title) },
-                onToggleDone = { task -> toDoViewModel.toggleTaskDone(userId, task) },
-                onDelete = { taskId -> toDoViewModel.deleteTask(userId, taskId) }
+                onAdd = { title ->
+                    Log.d("HomeScreen", "Adding task: $title")
+                    toDoViewModel.addTask(userId, title)
+                },
+                onToggleDone = { task ->
+                    Log.d("HomeScreen", "Toggling task done: ${task.id}")
+                    toDoViewModel.toggleTaskDone(userId, task)
+                },
+                onDelete = { taskId ->
+                    Log.d("HomeScreen", "Deleting task: $taskId")
+                    toDoViewModel.deleteTask(userId, taskId)
+                }
             )
-}}}
+        }
+    }
+}

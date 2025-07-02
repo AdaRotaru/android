@@ -22,5 +22,5 @@ object ApiKeyModule {
 
    @Provides
     @Named("OpenAiApiKey")
-   fun provideOpenAiApiKey(): String = "cheie"
+   fun provideOpenAiApiKey(): String = "cheia"
 }
